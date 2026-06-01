@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fnirsi-dps150"
+version = "0.1.0"
+dependencies = ["pyserial", "click", "rich", "textual"]
+
+[project.scripts]
+dps150 = "dps150.cli:cli"

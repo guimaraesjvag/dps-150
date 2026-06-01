@@ -1,0 +1,2 @@
+# FNIRSI DPS150 power supply — grant access to plugdev group
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2e3c", ATTRS{idProduct}=="5740", GROUP="plugdev", MODE="0660", SYMLINK+="dps150"
