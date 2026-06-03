@@ -196,7 +196,28 @@ class DPS150App(App):
         if not inp_i.has_focus and state.current_set > 0 and inp_i.value == "":
             inp_i.value = f"{state.current_set:.3f}"
 
+    def _apply_setpoints_from_inputs(self) -> None:
+        state = self.driver.state
+        inp_v = self.query_one("#v-input", Input)
+        inp_i = self.query_one("#i-input", Input)
+        try:
+            v = float(inp_v.value)
+            v = max(0.0, min(v, state.max_voltage or 30.0))
+            self.driver.set_voltage(v)
+            inp_v.value = f"{v:.3f}"
+        except ValueError:
+            pass
+        try:
+            c = float(inp_i.value)
+            c = max(0.0, min(c, state.max_current or 5.0))
+            self.driver.set_current(c)
+            inp_i.value = f"{c:.3f}"
+        except ValueError:
+            pass
+
     def action_toggle_output(self) -> None:
+        if not self.driver.state.output_enabled:
+            self._apply_setpoints_from_inputs()
         self.driver.toggle_output()
 
     def action_reset_counters(self) -> None:
@@ -211,7 +232,7 @@ class DPS150App(App):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "toggle-btn":
-            self.driver.toggle_output()
+            self.action_toggle_output()
         elif event.button.id == "reset-btn":
             self.action_reset_counters()
 
